@@ -137,3 +137,17 @@ export const edit = async (req: Request, res: Response) => {
         message: "Cập nhật thành công"
     });
 }
+//[DELETE] /api/v1/tasks/delete/:id
+export const deleteTask = async (req: Request, res: Response) => {
+    const id = req.params.id;
+
+    await Task.updateOne({ _id: id }, {
+        deleted: true,
+        deletedAt: new Date()
+    });
+
+    res.json({
+        code: 200,
+        message: "Xóa thành công"
+    });
+}
