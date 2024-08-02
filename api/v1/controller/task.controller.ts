@@ -66,7 +66,7 @@ export const detail = async (req: Request, res: Response) => {
 }
 //[PATCH] /api/v1/tasks/change-status/:id
 export const changeStatus = async (req: Request, res: Response) => {
-    const id:String= req.params.id;
+    const id: String = req.params.id;
     const status = req.body.status;
     await Task.updateOne({
         _id: id
@@ -77,5 +77,54 @@ export const changeStatus = async (req: Request, res: Response) => {
     res.json({
         code: 200,
         message: "Cập nhật trạng thái thành công"
+    });
+}
+//[PATCH] /api/v1/tasks/change-multi
+export const changeMulti = async (req: Request, res: Response) => {
+    const { ids, key, value } = req.body;
+    switch (key) {
+        case "status":
+            await Task.updateMany(
+                {
+                    _id: { $in: ids }
+                }, {
+                status: value
+            }
+            )
+            res.json({
+                code: 200,
+                message: "Cập nhật trạng thái thành công"
+            });
+            break;
+        case "delete":
+            await Task.updateMany(
+                {
+                    _id: { $in: ids }
+                }, {
+                deleted: true,
+                deletedAt: new Date()
+            }
+            )
+            res.json({
+                code: 200,
+                message: "Xóa thành công"
+            });
+            break;
+        default:
+            res.json({
+                code: 400,
+                message: "Không tồn tại"
+            });
+            break;
+    }
+}
+//[POST] /api/v1/tasks/create
+export const createPost = async (req: Request, res: Response) => {
+    const task = new Task(req.body);
+    const data = await task.save();
+    res.json({
+        code: 200,
+        message: "Tao thành công",
+        data: data
     });
 }
