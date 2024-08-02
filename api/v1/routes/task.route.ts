@@ -12,4 +12,6 @@ router.patch("/change-multi", controller.changeMulti)
 
 router.post("/create", controller.createPost)
 
-export const taskRoutes:Router = router;
+router.patch("/edit/:id", controller.edit)
+
+export const taskRoutes:Router = router; 

@@ -128,3 +128,12 @@ export const createPost = async (req: Request, res: Response) => {
         data: data
     });
 }
+//[PATCH] /api/v1/tasks/edit/:id
+export const edit = async (req: Request, res: Response) => {
+    const id = req.params.id;
+    await Task.updateOne({ _id: id }, req.body);
+    res.json({
+        code: 200,
+        message: "Cập nhật thành công"
+    });
+}
