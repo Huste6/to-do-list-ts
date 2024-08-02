@@ -1,7 +1,7 @@
-import express,{Express,Request,Response} from "express"
+import express,{Express} from "express"
 import * as database from "./config/database"
 import dotenv from "dotenv";
-import Task from "./models/task.model";
+import mainV1Routes from "./api/v1/routes/index.route";
 
 dotenv.config();
 
@@ -10,30 +10,8 @@ database.connect();
 const app:Express = express();
 const port:string | number = process.env.PORT || 3000;
 
-app.get("/tasks", async (req: Request,res: Response) => {
-    const tasks = await Task.find({
-        deleted:false
-    })
-    console.log(tasks);
+mainV1Routes(app);
 
-    res.json({
-        code:200,
-        tasks: tasks
-    });
-})
-
-app.get("/tasks/detail/:id", async (req: Request,res: Response) => {
-    const id:string = req.params.id;
-
-    const tasks = await Task.find({
-        _id: id,
-        deleted:false
-    })
-    res.json({
-        code:200,
-        tasks: tasks
-    });
-})
 app.listen(port, ()=>{
     console.log(`App listening on port ${port}`);
 })
