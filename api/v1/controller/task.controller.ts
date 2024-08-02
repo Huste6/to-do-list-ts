@@ -1,20 +1,20 @@
-import {Request,Response} from "express"
+import { Request, Response } from "express"
 import Task from "../models/task.model";
 import paginationHelper from "../../../helper/paganition";
 import SearchHelper from "../../../helper/search";
 
 //[GET] /api/v1/tasks
-export const index = async (req: Request,res: Response) => {
+export const index = async (req: Request, res: Response) => {
     //find
-    interface Find{
-        deleted:boolean,
-        status?:string,
-        title?:RegExp
+    interface Find {
+        deleted: boolean,
+        status?: string,
+        title?: RegExp
     }
-    const find:Find = {
-        deleted:false
+    const find: Find = {
+        deleted: false
     }
-    if(req.query.status){
+    if (req.query.status) {
         find.status = req.query.status.toString();
     }
     //end find
@@ -26,7 +26,7 @@ export const index = async (req: Request,res: Response) => {
         limitItem: 2
     }, req.query, CountTask);
     // end pagination
-    
+
     //search
     const ObjectSearch = SearchHelper(req.query);
     if (req.query.keyword) {
@@ -36,9 +36,9 @@ export const index = async (req: Request,res: Response) => {
 
     //sort
     const sort = {};
-    if(req.query.sortKey && req.query.sortValue){
+    if (req.query.sortKey && req.query.sortValue) {
         const sortKey = req.query.sortKey.toString();
-        sort[sortKey]=req.query.sortValue;
+        sort[sortKey] = req.query.sortValue;
     }
     //end sort
     const tasks = await Task
@@ -46,21 +46,36 @@ export const index = async (req: Request,res: Response) => {
         .sort(sort)
         .limit(objectPagination.limitItem)
         .skip(objectPagination.skip);
-        
+
     res.json({
-        code:200,
+        code: 200,
         tasks: tasks
     });
 }
 //[GET] /api/v1/tasks/detail/:id
-export const detail = async (req: Request,res: Response) => {
-    const id:string = req.params.id;
+export const detail = async (req: Request, res: Response) => {
+    const id: string = req.params.id;
     const tasks = await Task.find({
         _id: id,
-        deleted:false
+        deleted: false
     })
     res.json({
-        code:200,
+        code: 200,
         tasks: tasks
+    });
+}
+//[PATCH] /api/v1/tasks/change-status/:id
+export const changeStatus = async (req: Request, res: Response) => {
+    const id:String= req.params.id;
+    const status = req.body.status;
+    await Task.updateOne({
+        _id: id
+    }, {
+        status: status
+    })
+
+    res.json({
+        code: 200,
+        message: "Cập nhật trạng thái thành công"
     });
 }
