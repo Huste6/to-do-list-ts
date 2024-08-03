@@ -66,3 +66,11 @@ export const login = async (req:Request , res: Response) => {
         token: token
     })
 }
+//[GET] /api/v1/user/detail
+export const detail = async (req:Request , res: Response) => {
+    res.json({
+        code:200,
+        message:"success",
+        info:req["user"]
+    })
+}
